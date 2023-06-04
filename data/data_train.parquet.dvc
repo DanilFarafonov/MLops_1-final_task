@@ -1,0 +1,4 @@
+outs:
+- md5: b5a8b0ef795bd24e5af68d01600c9473
+  size: 241342624
+  path: data_train.parquet
