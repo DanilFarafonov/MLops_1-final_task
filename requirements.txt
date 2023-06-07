@@ -1,0 +1,7 @@
+Pillow
+fastapi
+uvicorn
+python-multipart
+httpx
+tensorflow
+pandas
