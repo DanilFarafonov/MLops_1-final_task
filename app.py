@@ -1,8 +1,9 @@
 from fastapi import FastAPI, UploadFile
 from PIL import Image
-from tensorflow import keras
+import tensorflow as tf
 import io
 import os
+import numpy as np
 
 
 def get_best_model():
@@ -16,12 +17,16 @@ def get_best_model():
     scores = list(models_dict.keys())
     top_score = max(scores)
     top_model_name = models_dict[top_score]
-    top_model = keras.models.load_model(top_model_name)
+    top_model = tf.keras.models.load_model('models/' + top_model_name)
     return top_model
 
 
 app = FastAPI()
 model = get_best_model()
+
+
+cloth_types = {0: 'Футболка', 1: 'Брюки', 2: 'Свитер', 3: 'Платье', 4: 'Пальто',
+               5: 'Туфли', 6: 'Рубашка', 7: 'Кроссовки', 8: 'Сумка', 9: 'Ботинки'}
 
 
 @app.get("/")
@@ -31,7 +36,7 @@ def root():
     :return: greetings
     """
     return {"message": "Сервис для классификации одежды по изображению."
-                       "\nНейнонная сеть обучена на датасете fashion_mnist."}
+                       "\nНейронная сеть обучена на датасете fashion_mnist."}
 
 
 @app.post("/predict/")
@@ -43,5 +48,16 @@ def predict(photo: UploadFile):
     """
     file_bytes = photo.file.read()
     image = Image.open(io.BytesIO(file_bytes))
+    pixels = np.empty((28, 28))
 
-    return {}
+    for i in range(28):
+        for j in range(28):
+            current_pixel = image.getpixel((i, j)) / 255
+            pixels[j][i] = current_pixel
+
+    pixels = pixels.reshape(1, 784)
+    predictions = model.predict(pixels)
+    cloth_number = np.argmax(predictions, axis=1)[0]
+    cloth_class = cloth_types[cloth_number]
+
+    return {'message': cloth_class}
