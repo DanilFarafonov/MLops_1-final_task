@@ -1,8 +1,6 @@
 import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-import datetime
-import os
 import absl.logging
 
 
@@ -26,18 +24,5 @@ model.fit(x_train, y_train,
           verbose=1)
 
 
-x_test = pd.read_csv('data/x_test.csv', index_col=0)
-y_test = pd.read_csv('data/y_test.csv', index_col=0)
-
-
-score = model.evaluate(x_test, y_test)
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
-
-
-accuracy = str(round(score[1], 2))
-time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-if not os.path.exists('models'):
-    os.mkdir('models')
-model.save('models/model_' + accuracy + '_' + time)
+model.save('model_fashion_mnist')
 print('Model training and saving successfully completed')
