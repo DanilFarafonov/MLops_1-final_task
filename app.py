@@ -2,27 +2,11 @@ from fastapi import FastAPI, UploadFile
 from PIL import Image
 import tensorflow as tf
 import io
-import os
 import numpy as np
 
 
-def get_best_model():
-    models = os.listdir('models/')
-    models_dict = dict()
-
-    for model in models:
-        score = float(model.split('_')[1])
-        models_dict[score] = model
-
-    scores = list(models_dict.keys())
-    top_score = max(scores)
-    top_model_name = models_dict[top_score]
-    top_model = tf.keras.models.load_model('models/' + top_model_name)
-    return top_model
-
-
 app = FastAPI()
-model = get_best_model()
+model = tf.keras.models.load_model('model_fashion_mnist')
 
 
 cloth_types = {0: 'Футболка', 1: 'Брюки', 2: 'Свитер', 3: 'Платье', 4: 'Пальто',
