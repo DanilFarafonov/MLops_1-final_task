@@ -6,3 +6,5 @@ httpx
 tensorflow
 pandas
 numpy
+dvc
+dvc_gdrive
